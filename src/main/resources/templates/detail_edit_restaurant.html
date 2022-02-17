@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://thymeleaf.org" lang="en">
+
+<head>
+<!--    <title>Title</title>-->
+<!--    &lt;!&ndash; Required meta tags &ndash;&gt;-->
+<!--    <meta charset="utf-8">-->
+
+
+<!--    &lt;!&ndash; Bootstrap CSS &ndash;&gt;-->
+<!--    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"-->
+<!--          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">-->
+<!--    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">-->
+<!--    <link rel="stylesheet" th:href="@{/css/font.css}">-->
+<!--    <link rel="stylesheet" th:href="@{/css/style.css}">-->
+    <title>Title</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/font.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/css/select2.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body>
+<form action="#" method="post" th:action="@{/restaurant/save}" th:object="${restaurant}">
+    <div class="add-restaurant">
+        <div class="title">
+            <h4>Thêm/Chỉnh sửa yêu cầu</h4>
+            <a href="#" id="close">X</a>
+        </div>
+        <div class="body">
+            <p class="frame">Tên quán ăn <span style="color: red;">(*)</span></p>
+            <input class="input restaurant" type="text" id="restaurantName" th:field="*{restaurantName}">
+            <p class="frame">Địa chỉ <span style="color: red;">(*)</span></p>
+            <input class="input restaurant" type="text" id="restaurantAddress" th:field="*{address}">
+            <p class="frame">Liên hệ <span style="color: red;">(*)</span></p>
+            <input class="input restaurant" type="text" id="restaurantPhoneNumber" th:field="*{phoneNumber}">
+            <div class="table-restaurant">
+                <table class="table-dish">
+                    <thead>
+                    <tr>
+                        <th>Món chính</th>
+                        <th>Món phụ</th>
+                        <th>Hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    <tr th:each = "option : ${lOption}" class="trTable">
+                        <td>
+                        <select class="mainDish">
+                        </td>
+                        <td>
+                        <div class="row justify-content-center">
+                            <div class="col-lg-4 d-flex justify-content-center align-items-center">
+                                <select class="js-select2" multiple="multiple">
+                                    </select>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                        <div>
+                            <button class="tdDelete">xoá</button>
+                        </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <button class="add btn btn-light" id="addrow" type="button"><i class="fas fa-plus"></i> Thêm cặp món mới
+            </button>
+            <p class="frame">Trạng thái</p>
+            <div class="form-status">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1"
+                           value="true">
+                    <label class="form-check-label" for="inlineRadio1" style="font-weight: 500;">Hoạt động</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2"
+                           value="false">
+                    <label class="form-check-label" for="inlineRadio2" style="font-weight: 500;">Tạm khóa</label>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="action-form">
+                <button class="add btn btn-light" type="reset">Hủy bỏ</button>
+                <button class="export btn btn-primary" type="button" id="submit">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</form>
+</body>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+</script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+</script>
+<script th:src="@{/js/d403942475.js}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.4/js/select2.min.js"></script>
+<script th:src="@{/js/main.js}"></script>
+
+<script th:inline="javascript">
+    $(document).ready(function ($) {
+        let countRow = 0;
+        let dishes = [[${dishes}]];
+
+        $('#addrow').click(function (e) {
+            $("#tbody").append('<tr class="trTable">' +
+                '<td>' +
+                '<select class="mainDish">' +
+                '</select>' +
+                '</td>' +
+                '<td>' +
+                '<div class="row justify-content-center">' +
+                '<div class="col-lg-4 d-flex justify-content-center align-items-center">' +
+                '<select class="js-select2" multiple="multiple">' +
+                '</select>' +
+                '</div>' +
+                '</div>' +
+                '</td>' +
+                '<td>' +
+                '<div class="tdDelete">' +
+                '</div>' +
+                '</td></tr>'
+            )
+            var selectMainDish = document.getElementsByClassName("mainDish");
+            let tdDelete = document.getElementsByClassName("tdDelete");
+
+            let deleteButton = document.createElement('button');
+            deleteButton.type = "button";
+            deleteButton.className = 'deleteRow';
+            deleteButton.value = countRow;
+            deleteButton.innerHTML = "Xóa";
+            deleteButton.onclick = deleteRow;
+            tdDelete[countRow].appendChild(deleteButton);
+
+            dishes.forEach(e => {
+                let op1 = document.createElement('option');
+                op1.value = e.dishId;
+                op1.innerHTML = e.dishName;
+                selectMainDish[countRow].appendChild(op1);
+            })
+
+            let selectSideDish = document.getElementsByClassName("js-select2");
+            dishes.forEach(e => {
+                let op1 = document.createElement('option');
+                op1.value = e.dishId;
+                op1.innerHTML = e.dishName;
+                selectSideDish[countRow].appendChild(op1);
+            })
+            countRow++;
+
+            $(".js-select2").select2({
+                closeOnSelect: false,
+                placeholder: "Click to select an option",
+                allowHtml: true,
+                allowClear: true,
+                tags: true
+            });
+
+            $('.icons_select2').select2({
+                width: "100%",
+                templateSelection: iformat,
+                templateResult: iformat,
+                allowHtml: true,
+                placeholder: "Click to select an option",
+                dropdownParent: $('.select-icon'),//обавили класс
+                allowClear: true,
+                multiple: false
+            });
+
+            function iformat(icon, badge,) {
+                var originalOption = icon.element;
+                var originalOptionBadge = $(originalOption).data('badge');
+                return $('<span><i class="fa ' + $(originalOption).data('icon') + '"></i> ' + icon.text + '<span class="badge">' + originalOptionBadge + '</span></span>');
+            }
+        })
+
+        function deleteRow(e) {
+            let listButton = document.getElementsByClassName("deleteRow");
+            let val = e.target.value;
+            for (let i = 0; i < listButton.length; i++) {
+                if (val === listButton[i].value) {
+                    let trTable = document.getElementsByClassName("trTable");
+                    trTable[i].remove();
+                }
+            }
+            countRow--;
+        }
+
+        $("#submit").click(function () {
+            let mainDish = document.getElementsByClassName("mainDish");
+            let mainDishId = [];
+            for (let i = 0; i < mainDish.length; i++) {
+                mainDishId.push(mainDish[i].value);
+            }
+
+            let multiSelect = $(".js-select2");
+            let sideDishSelected = [];
+            for (let i = 0; i < multiSelect.length; i++) {
+                sideDishSelected.push($(multiSelect[i]).val());
+            }
+
+
+            let sets = [];
+            for (let i = 0; i < mainDishId.length; i++) {
+                let set = {};
+                set[mainDishId[i]] = sideDishSelected[i];
+                sets.push(set);
+            }
+
+            let restaurant = {
+                "name": $("#restaurantName").val(),
+                "address": $("#restaurantAddress").val(),
+                "phoneNumber": $("#restaurantPhoneNumber").val(),
+                "status": $("input[name='inlineRadioOptions']:checked").val(),
+                "sets" : sets
+            };
+
+
+
+            $.ajax({
+                url:"/restaurant/save",
+                type: "post",
+                data: {
+                    restaurant: restaurant
+                },
+                contentType:"application/json",
+                success: function (data) {
+                    console.log(data);
+                    console.log('ok');
+                },
+                error: function (data) {
+                    console.log('false');
+                }
+            })
+        })
+    })
+</script>
+

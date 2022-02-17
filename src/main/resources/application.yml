@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://192.168.1.132:5432/booking_lunch
+    password: postgres
+    username: root
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update

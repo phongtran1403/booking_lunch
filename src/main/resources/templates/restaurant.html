@@ -1,0 +1,264 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Title</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/font.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="dish col-md-2">
+            <div class="parent">
+                <i class="far fa-smile"></i>
+                <p class="title">Đặt cơm</p>
+            </div>
+            <div class="submenu">
+                <ul>
+                    <a href="booking">
+                        <li>Danh sách yêu cầu</li>
+                    </a>
+                    <a href="#">
+                        <li class="selection">Quán ăn</li>
+                    </a>
+                </ul>
+            </div>
+        </div>
+        <div class="body col-md-10">
+            <div class="global-header">
+                <i class="fas fa-bars"></i>
+                <div class="user">
+                    <i class="fas fa-user-circle"></i>
+                    <p>Phạm Hưng</p>
+                </div>
+            </div>
+            <main>
+                <div class="row">
+                    <div class="col-md-3">
+                        <p class="frame">Trạng thái</p>
+                        <select name="status" id="status">
+                            <option value="">Tất cả</option>
+                            <option value="true">Hoạt động</option>
+                            <option value="false">Tạm khóa</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <p class="frame">Thực đơn</p>
+                        <select id='menud' class="input">
+                            <option value=" ">Danh sách combo</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <p class="frame">Tìm kiếm</p>
+                        <input class="input" placeholder="Tên, địa chỉ, điện thoại" type="text" id="searchtxt">
+                    </div>
+                    <div class="col-md-3">
+                        <button class="add btn btn-primary"><a href="/restaurant/new" style="color: white"><i
+                                class="fas fa-plus"></i> Thêm quán ăn </a></button>
+                    </div>
+                </div>
+                <div class="table" id="restaurant">
+                    <table>
+
+                        <thead>
+                        <tr>
+                            <th>Tên quán ăn</th>
+                            <th>Địa chỉ</th>
+                            <th>Liên hệ</th>
+                            <th>Thực đơn</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tbody">
+
+                        </tbody>
+                    </table>
+                </div>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-end" id="pagination">
+
+                    </ul>
+                </nav>
+
+            </main>
+        </div>
+    </div>
+</div>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script type="text/javascript">
+    $(document).ready(function ($) {
+        let currentPage =0
+        let url = "http://localhost:8080/view/restaurant/"+currentPage
+        let search = '';
+        let setname = '';
+        let status="";
+        let count = 0
+        $.ajax({
+            type: 'GET',
+            dataType: "json",
+            url
+        }).done(function (data) {
+            data.content.forEach(element => {
+                let stts = element.status
+                if(stts== 'true'){
+                    stts = 'Hoạt động'
+                }else{
+                    stts = 'Tạm khóa'
+                }
+                $("#tbody").append('<tr><td>' +
+                    element.restaurantName +
+                    '</td><td>' +
+                    element.address +
+                    '</td><td>' +
+                    element.phoneNumber +
+                    '</td><td class="sett">' +
+                    '</td><td><div class="item-status btn-success"><p >' +
+                    stts +
+                    '</p></div></td><td><a href="restaurant/'+element.restaurantId+'/'+element.status+'">Khóa</a>' +
+                    '<a href="/restaurat/detail&edit/' +element.restaurantId+ '">Chi tiết</a><a href="/restaurant/delete/'+element.restaurantId+'">Xóa</a></td></tr>')
+
+                let setn = [] = element.setName.split(',')
+                let x = document.getElementsByClassName("sett")
+                setn.forEach(e => {
+                    x[count].append(e + ' ')
+                })
+                count++
+            });
+            data.setN.forEach( setN=>{
+                $("#menud").append('<option value = "' + setN + '">' + setN + '</option>')
+
+            })
+            $("#status").change(function (e){
+                setname = $("#menud").val();
+                search = $("#searchtxt").val();
+                status = e.target.value;
+                console.log(status)
+                $("#tbody").append(renderPage(0, setname, search,status));
+
+            })
+            $("#menud").change(function (e) {
+                setname = e.target.value;
+                search = $("#searchtxt").val();
+                status = $("#status").val();
+                $("#tbody").append(renderPage(0, setname, search,status));
+            });
+
+            $("#searchtxt").keyup(function (e) {
+                setname = $("#menud").val();
+                search = $(this).val();
+                status = $("#status").val();
+                $("#tbody").append(renderPage(0, setname, search,status));
+            });
+
+            const prevWrapper = document.createElement('li')
+            const prev = document.createElement('button')
+            const nextWrapper = document.createElement('li')
+            const next = document.createElement('button')
+            prevWrapper.classList.add('page-link')
+            nextWrapper.classList.add('page-link')
+            prev.classList.add('button-change-page')
+            next.classList.add('button-change-page')
+            prev.innerHTML = 'Previous'
+            next.innerHTML = 'Next'
+            prev.disabled =true
+            prevWrapper.appendChild(prev)
+            $("#pagination").append(prevWrapper);
+
+            prevWrapper.addEventListener("click", () => {
+                if(currentPage == 0) return;
+                currentPage -- ;
+                if (currentPage == 0) prev.disabled = true
+                if(currentPage < data.totalPages) next.disabled =false
+                renderPage(currentPage,setname,search,status)
+            })
+
+            for (let i = 0; i < data.totalPages; i++) {
+                const pageLi = document.createElement('li')
+                pageLi.classList.add('page-link')
+                pageLi.innerHTML = i+1;
+                pageLi.addEventListener("click", () => {
+                    renderPage(i, setname, search,status)
+                });
+                $("#pagination").append(pageLi)
+            }
+            nextWrapper.appendChild(next)
+            $("#pagination").append(nextWrapper);
+
+            nextWrapper.addEventListener("click", () => {
+                if(currentPage == data.totalPages -1) return;
+                currentPage ++
+                if(currentPage > 0) prev.disabled =false
+                if(currentPage == data.totalPages -1) next.disabled =true
+                renderPage(currentPage,setname,search,status)
+            })
+        });
+
+        function renderPage(pageN, setname, search,stt) {
+            $("#tbody").html('')
+            if (setname != '') {
+                url = "http://localhost:8080/view/restaurant/" + pageN + "?setname=" + setname + "&keyword=" + search+"&status="+stt;
+            } else {
+                url = "http://localhost:8080/view/restaurant/" + pageN + "?setname= " + setname + "&keyword=" + search+"&status="+stt;
+            }
+            $.ajax({
+                type: 'GET',
+                dataType: "json",
+                url
+            }).done(function (data) {
+                count =0;
+                data.content.forEach(element => {
+                    let stts = element.status
+                    if(stts== 'true'){
+                        stts = 'Hoạt động'
+                    }else{
+                        stts = 'Tạm khóa'
+                    }
+                    $("#tbody").append('<tr><td>' +
+                        element.restaurantName +
+                        '</td><td>' +
+                        element.address +
+                        '</td><td>' +
+                        element.phoneNumber +
+                        '</td><td class="sett">' +
+                        '</td><td><div class="item-status btn-success"><p>' +
+                        stts +
+                        '</p></div></td><td><a href="restaurant/'+element.restaurantId+'/'+element.status+'">Khóa</a>' +
+                        '<a href="/restaurat/detail&edit/' +element.restaurantId+ '">Chi tiết</a><a href="#">Xóa</a></td></tr>')
+
+                    let setn = [] = element.setName.split(',')
+                    let x = document.getElementsByClassName("sett")
+                    setn.forEach(e => {
+                        x[count].append(e + ' ')
+                    })
+                    count++
+                });
+            });
+        }
+    });
+</script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+<script th:src="@{/js/d403942475.js}"></script>
+<script th:src="@{//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

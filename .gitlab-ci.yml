@@ -1,0 +1,51 @@
+variables:
+  MAVEN_CLI_OPTS: "-s .m2/settings.xml --batch-mode"
+  GIT_DEPTH: 0
+  TEST_SERVER_HOME: "/home/svip/booking_lunch"
+  TEST_SERVER_IP: "192.168.1.132"
+stages:
+  - test
+  - build
+  - deploy-test
+
+cache:
+  paths:
+    - $MAVEN_LOCAL_REPO
+
+test:
+  stage: test
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "develop"'
+      variables:
+        BUILD_ENV: "P test"
+    - when: always
+
+  script:
+    - mvn test $BUILD_ENV
+
+build:
+  stage: build
+  script:
+    - echo $MAVEN_OPTS
+    - mvn $MAVEN_OPTS package
+  only:
+    - master
+    - develop
+    - staging
+  artifacts:
+    paths:
+      - target/*.jar
+
+
+deploy-test:
+  stage: deploy-test
+  before_script:
+    - eval `ssh-agent -s`
+    - ssh-add <(echo "$SSH_TEST_PRIVATE_KEY")
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+  script:
+    - scp -o StrictHostKeyChecking=no target/*.jar svip@$TEST_SERVER_IP:$TEST_SERVER_HOME
+  only:
+    - develop

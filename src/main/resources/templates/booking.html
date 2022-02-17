@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Title</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <link rel="stylesheet" href="css/font.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="script" href="js/main.js">
+    <link rel="script" href="js/d403942475.js">
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="dish col-md-2">
+            <div class="parent">
+                <i class="far fa-smile"></i>
+                <p class="title">Đặt cơm</p>
+            </div>
+            <div class="submenu">
+                <ul>
+                    <a href="#">
+                        <li class="selection">Danh sách yêu cầu</li>
+                    </a>
+                    <a th:href="@{/restaurant}">
+                        <li>Quán ăn</li>
+                    </a>
+                </ul>
+            </div>
+        </div>
+        <div class="body col-md-10">
+            <div class="global-header">
+                <i class="fas fa-bars"></i>
+                <div class="user">
+                    <i class="fas fa-user-circle"></i>
+                    <p>UserName</p>
+                </div>
+            </div>
+            <main>
+                <div class="row">
+                    <div class="col-md-3">
+                        <p class="frame">Ngày đặt</p>
+                        <div class="input">
+                            <p class="date">08/11/2021 - 20/11/2021</p>
+                            <i class="far fa-calendar-minus"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <p class="frame">Quán ăn</p>
+                        <div class="input">
+                            <div class="item">
+                                <p>Quán 1 <a href="#">x</a></p>
+                                <!-- <i class="fas fa-times"></i>     -->
+                            </div>
+                            <div class="item">
+                                <p>Quán 2 <a href="#">x</a></p>
+                                <!-- <i class="fas fa-times"></i>     -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <p class="frame">Trạng thái</p>
+                        <div class="input">
+                            <div class="item">
+                                <p>Đã đặt <a href="#">x</a></p>
+                                <!-- <i class="fas fa-times"></i>     -->
+                            </div>
+                            <div class="item">
+                                <p>Đã hủy <a href="#">x</a></p>
+                                <!-- <i class="fas fa-times"></i>     -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <p class="frame">Tìm kiếm</p>
+                        <input class="input" placeholder="Người dùng, quán ăn, món ăn" type="text">
+                    </div>
+                </div>
+                <div class="action">
+                    <button class="add btn btn-primary"><a href="/addBookingAdmin" style="color: white"><i
+                            class="fas fa-plus"></i> Thêm yêu cầu </a></button>
+                    <button class="export btn btn-outline-primary"  type="submit">
+                        <i class="fas fa-download">
+                            <a href="/exportFileExcel">  Xuất yêu cầu</a>
+                        </i>
+                    </button>
+                    <div class="status">
+                        <p th:if="${notify}"><i class="far fa-check-circle"
+                                                style="color: #7CB305; font-size: 20px;"></i>
+                            <span>Bạn đã đặt cơm</span>
+                        </p>
+                        <p th:unless="${notify}"><i class="fas fa-exclamation-circle"
+                                                    style="color: #FFA940; font-size: 20px;"></i>
+                            <span>Bạn chưa đặt cơm</span>
+                        </p>
+                    </div>
+                </div>
+                <div class="table">
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Người dùng</th>
+                            <th>Quán ăn</th>
+                            <th>Thực đơn</th>
+                            <th>Số lượng</th>
+                            <th>Trạng thái</th>
+                            <th>Cập nhật</th>
+                            <th>Hành động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="booking : ${listBooking}">
+                            <form id="bookingList">
+                                <td th:text="${booking.getFullName()}"></td>
+                                <td th:text="${booking.getRestaurantName()}"></td>
+                                <td>
+                                    <div class="item items"
+                                         th:each="item: ${#strings.setSplit(booking.getDishName(),',')}">
+                                        <p th:text="${item}"></p>
+                                    </div>
+                                </td>
+                                <td th:utext="${booking.getQuantity()}"></td>
+                                <td th:if="${booking.getStatus()} == 'Đã đặt'">
+                                    <div class="booking-status-dd" th:text="${booking.getStatus()}"></div>
+                                </td>
+                                <td th:if="${booking.getStatus()} == 'Đã hủy'">
+                                    <div class="booking-status-dh" th:text="${booking.getStatus()}"></div>
+                                </td>
+                                <td th:if="${booking.getStatus()} == 'Chưa đặt'">
+                                    <div class="booking-status-cd" th:text="${booking.getStatus()}"></div>
+                                </td>
+                                <td th:if="(${current} - ${booking.getUpdateTime()}) < 60000">Vừa xong</td>
+                                <td th:if="((${current} - ${booking.getUpdateTime()}) < 3600000) and ((${current} - ${booking.getUpdateTime()}) > 60000)"
+                                    th:text="(${current} - ${booking.getUpdateTime()} - (${current} - ${booking.getUpdateTime()})%60000)/60000 + ' phút trước'"></td>
+                                <td th:if="((${current} - ${booking.getUpdateTime()}) < 86400000) and ((${current} - ${booking.getUpdateTime()}) > 3600000)"
+                                    th:text="(${current} - ${booking.getUpdateTime()} - (${current} - ${booking.getUpdateTime()})%3600000)/3600000 + ' giờ trước'"></td>
+                                <td th:if="((${current} - ${booking.getUpdateTime()}) < 604800000) and ((${current} - ${booking.getUpdateTime()}) > 86400000)"
+                                    th:text="(${current} - ${booking.getUpdateTime()} - (${current} - ${booking.getUpdateTime()})%86400000)/86400000 + ' ngày trước'"></td>
+                                <td th:if="((${current} - ${booking.getUpdateTime()}) < 2592000000) and ((${current} - ${booking.getUpdateTime()}) > 604800000)"
+                                    th:text="(${current} - ${booking.getUpdateTime()} - (${current} - ${booking.getUpdateTime()})%604800000)/604800000 + ' tuần trước'"></td>
+                                <td th:if="((${current} - ${booking.getUpdateTime()}) < 31557600000) and ((${current} - ${booking.getUpdateTime()}) > 2592000000)"
+                                    th:text="(${current} - ${booking.getUpdateTime()} - (${current} - ${booking.getUpdateTime()})%2592000000)/2592000000 + ' tháng trước'"></td>
+                                <td th:if="(${current} - ${booking.getUpdateTime()}) > 31557600000"
+                                    th:text="(${current} - ${booking.getUpdateTime()} - (${current} - ${booking.getUpdateTime()})%31557600000)/31557600000 + ' năm trước'"></td>
+
+                                <td>
+                                    <form>
+                                        <a class="click" href="#">Chỉnh sửa</a>
+                                        <a th:if="${booking.getStatus()} == 'Chưa đặt'" class="click"
+                                           th:href="@{'/booking/' + ${booking.getBookingId()} + '/cd'}">Đã
+                                            đặt</a>
+                                        <a th:if="${booking.getStatus()} == 'Đã đặt'" class="click"
+                                           th:href="@{'/booking/' + ${booking.getBookingId()} + '/dd'}">Chưa
+                                            đặt</a>
+                                        <a th:if="${booking.getStatus()} == 'Đã hủy'" class="click"
+                                           th:href="@{'/booking/' + ${booking.getBookingId()} + '/dh'}">Chưa
+                                            đặt</a>
+                                        <a class="click"
+                                           th:href="@{'/booking/cancel/' + ${booking.getBookingId()}}">Hủy</a>
+                                    </form>
+                                </td>
+                            </form>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-end">
+                        <li class="page-item disabled">
+                            <a class="page-link">Previous</a>
+                        </li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <!-- Popup Client -->
+
+            </main>
+        </div>
+    </div>
+</div>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+<script src="js/d403942475.js"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="js/main.js"></script>
+</body>
+
+</html>
